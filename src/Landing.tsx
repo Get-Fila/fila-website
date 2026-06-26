@@ -268,18 +268,18 @@ export function Landing() {
 
             <p style={{ fontWeight: 300, fontSize: 13.5, color: '#80add1', margin: '18px 0 0', animation: 'filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.3s both' }}>Private beta launching soon. Waitlist members get first access.</p>
 
-            <div className="fila-hero-badges" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 30px', marginTop: 22, animation: 'filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both' }}>
+            <div className="fila-hero-badges" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 20px', marginTop: 22, animation: 'filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <IconShieldCheck size={22} color="#457aab" stroke={1.6} />
                 <span style={{ fontWeight: 400, fontSize: 14, color: '#244a73' }}>HIPAA-compliant</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <IconUser size={22} color="#457aab" stroke={1.6} />
-                <span style={{ fontWeight: 400, fontSize: 14, color: '#244a73' }}>Built for patients</span>
+                <span style={{ fontWeight: 400, fontSize: 14, color: '#244a73' }}>Built for patients by patients</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <IconStethoscope size={22} color="#457aab" stroke={1.6} />
-                <span style={{ fontWeight: 400, fontSize: 14, color: '#244a73' }}>Every provider, one place</span>
+                <span style={{ fontWeight: 400, fontSize: 14, color: '#244a73' }}>Every record and provider in one place</span>
               </div>
             </div>
           </div>
@@ -313,8 +313,8 @@ export function Landing() {
             <div className="fila-features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 22 }}>
               {[
                 { icon: <IconDownload size={34} color="#adcce6" stroke={1.5} />, title: 'Import', desc: 'Pull records from any provider via FHIR, document upload, or digital scan.' },
-                { icon: <IconChartLine size={34} color="#adcce6" stroke={1.5} />, title: 'Track', desc: 'Log symptoms, medications, visits, and results in one living timeline.' },
-                { icon: <IconSparkles size={34} color="#adcce6" stroke={1.5} />, title: 'Recommend', desc: 'AI surfaces patterns across your record and coaches you on what to raise with your provider.' },
+                { icon: <IconChartLine size={34} color="#adcce6" stroke={1.5} />, title: 'Track', desc: 'Log and track conditions, symptoms, medications, visits, and results in one living timeline.' },
+                { icon: <IconSparkles size={34} color="#adcce6" stroke={1.5} />, title: 'Recommend', desc: 'AI surfaces patterns across your record and coaches you on how to discuss them with your provider.' },
                 { icon: <IconShare size={34} color="#adcce6" stroke={1.5} />, title: 'Share', desc: 'Send a unified, read-only health history summary to any provider in seconds.' },
               ].map(c => (
                 <div key={c.title} style={{ background: '#102a45', borderRadius: 16, padding: '30px 26px 32px', position: 'relative', overflow: 'hidden' }}>
@@ -334,9 +334,9 @@ export function Landing() {
             <div className="fila-personas-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 18 }}>
               {[
                 { icon: <IconActivityHeartbeat size={24} color="#457aab" stroke={1.7} />, title: 'The Chronic Care Patient', desc: 'Juggling a dozen specialists and a tangle of medications across systems that never sync.' },
-                { icon: <IconSearch size={24} color="#457aab" stroke={1.7} />, title: 'The Diagnostic Odyssey Patient', desc: 'Years of tests and visits, still searching for an answer no single chart can see.' },
+                { icon: <IconSearch size={24} color="#457aab" stroke={1.7} />, title: 'The Diagnostic Odyssey Patient', desc: 'Still searching for an answer after years of tests and visits because no single provider sees the full picture.' },
                 { icon: <IconHeart size={24} color="#457aab" stroke={1.7} />, title: 'The Health-Conscious Patient', desc: 'Tracking wearables, labs, and concierge care, and wanting it all in one clear view.' },
-                { icon: <IconUsersGroup size={24} color="#457aab" stroke={1.7} />, title: 'The Family Health Manager', desc: 'Carrying the medical history of parents and children, holding every detail in their head.' },
+                { icon: <IconUsersGroup size={24} color="#457aab" stroke={1.7} />, title: 'The Family Health Manager', desc: 'Carrying medical histories and coordinating care for loved ones, holding every detail in their head.' },
               ].map(c => (
                 <div key={c.title} className="fila-card" style={{ background: '#fff', borderRadius: 16, padding: '28px 24px', boxShadow: '0 2px 14px rgba(16,42,69,0.05)', border: '1px solid rgba(128,173,209,0.3)', transition: 'transform 0.25s, box-shadow 0.25s', cursor: 'default' }}>
                   <div style={{ width: 46, height: 46, borderRadius: 12, background: 'rgba(69,122,171,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>{c.icon}</div>
