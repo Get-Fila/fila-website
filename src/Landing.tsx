@@ -221,7 +221,7 @@ export function Landing() {
           .fila-landing .fila-form button { width: 100%; }
         }
       `}</style>
-      <div className="fila-landing" style={{ fontFamily: "'Inter', sans-serif", color: '#102a45', background: '#d6e6f5', overflowX: 'hidden' }}>
+      <div className="fila-landing" style={{ fontFamily: "'Inter', sans-serif", color: '#102a45', background: '#d6e6f5' }}>
 
         {/* HEADER */}
         <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(214,230,245,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(173,204,230,0.4)', padding: '0 clamp(20px,5vw,56px)' }}>
