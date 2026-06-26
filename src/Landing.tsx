@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, FormEvent } from 'react';
+import filaLogo from './Fila_Gradient_Transparent.png';
 import {
   IconShieldCheck,
   IconUser,
@@ -12,7 +13,23 @@ import {
   IconHeart,
   IconUsersGroup,
   IconCheck,
+  IconX,
+  IconMail,
+  IconLoader2,
 } from '@tabler/icons-react';
+
+const FORMSPREE_WAITLIST = 'mdarglpd';
+const FORMSPREE_CONTACT = 'xqevqdgy';
+
+async function submitToFormspree(formId: string, data: Record<string, string>) {
+  const res = await fetch(`https://formspree.io/f/${formId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Submission failed');
+  return res.json();
+}
 
 function useCountUp(end: number, duration = 1800) {
   const [value, setValue] = useState(0);
@@ -45,13 +62,102 @@ function useCountUp(end: number, duration = 1800) {
   return { value, ref };
 }
 
+const inputBase: React.CSSProperties = {
+  width: '100%',
+  boxSizing: 'border-box',
+  fontFamily: "'Inter', sans-serif",
+  fontWeight: 300,
+  fontSize: 14,
+  color: '#102a45',
+  background: '#fff',
+  border: '1px solid #adcce6',
+  borderRadius: 10,
+  padding: '10px 13px',
+  outline: 'none',
+  transition: 'border-color 0.2s, box-shadow 0.2s',
+};
+
+function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) { setSent(false); setError(''); setName(''); setEmail(''); setMessage(''); }
+  }, [open]);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !message.trim()) { setError('Please fill out all required fields.'); return; }
+    setSending(true);
+    setError('');
+    try {
+      await submitToFormspree(FORMSPREE_CONTACT, { name, email, message });
+      setSent(true);
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(16,42,69,0.55)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 16, padding: '24px', maxWidth: 360, width: '100%', position: 'relative', boxShadow: '0 24px 64px rgba(16,42,69,0.2)' }}>
+        <button onClick={onClose} aria-label="Close" style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <IconX size={20} color="#80add1" stroke={1.8} />
+        </button>
+
+        {sent ? (
+          <div style={{ textAlign: 'center', padding: '8px 0' }}>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(69,122,171,0.1)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <IconCheck size={24} color="#457aab" stroke={2.2} />
+            </div>
+            <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 19, color: '#102a45', marginBottom: 6 }}>Message sent!</div>
+            <p style={{ fontWeight: 300, fontSize: 14.5, color: '#244a73', lineHeight: 1.5, margin: 0 }}>Thanks for reaching out. We'll get back to you soon.</p>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 20, color: '#102a45', marginBottom: 4 }}>Get in touch</div>
+            <p style={{ fontWeight: 300, fontSize: 14, color: '#244a73', lineHeight: 1.5, margin: '0 0 12px' }}>Questions, feedback, or partnership inquiries? We'd love to hear from you.</p>
+
+            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <input value={name} onChange={e => setName(e.target.value)} placeholder="Your name*" aria-label="Name" required className="fila-input" style={inputBase} />
+              <input value={email} onChange={e => { setEmail(e.target.value); setError(''); }} type="email" placeholder="you@email.com*" aria-label="Email" required className="fila-input" style={inputBase} />
+              <textarea value={message} onChange={e => { setMessage(e.target.value); setError(''); }} placeholder="Your message*" aria-label="Message" required rows={4} className="fila-input" style={{ ...inputBase, resize: 'vertical', minHeight: 80 }} />
+              {error && <div style={{ fontSize: 13.5, color: '#b04a4a' }}>{error}</div>}
+              <button type="submit" disabled={sending} className="fila-btn" style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: 15, color: '#fff', background: 'linear-gradient(135deg, #244a73 0%, #457aab 100%)', border: 'none', borderRadius: 10, padding: '12px 24px', cursor: sending ? 'wait' : 'pointer', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 6px 18px rgba(36,74,115,0.28)', opacity: sending ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                {sending ? <><IconLoader2 size={18} color="#fff" stroke={2} style={{ animation: 'spin 1s linear infinite' }} /> Sending...</> : 'Send Message'}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Landing() {
   const [heroEmail, setHeroEmail] = useState('');
   const [heroErr, setHeroErr] = useState('');
   const [heroDone, setHeroDone] = useState(false);
+  const [heroSending, setHeroSending] = useState(false);
   const [ctaEmail, setCtaEmail] = useState('');
   const [ctaErr, setCtaErr] = useState('');
   const [ctaDone, setCtaDone] = useState(false);
+  const [ctaSending, setCtaSending] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const heroInputRef = useRef<HTMLInputElement>(null);
 
   const stat1 = useCountUp(14);
@@ -60,31 +166,49 @@ export function Landing() {
 
   const valid = useCallback((e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((e || '').trim()), []);
 
-  const submitHero = (e: FormEvent) => {
+  const submitHero = async (e: FormEvent) => {
     e.preventDefault();
     if (!valid(heroEmail)) { setHeroErr('Please enter a valid email address.'); return; }
+    setHeroSending(true);
     setHeroErr('');
-    setHeroDone(true);
+    try {
+      await submitToFormspree(FORMSPREE_WAITLIST, { email: heroEmail.trim() });
+      setHeroDone(true);
+    } catch {
+      setHeroErr('Something went wrong. Please try again.');
+    } finally {
+      setHeroSending(false);
+    }
   };
 
-  const submitCta = (e: FormEvent) => {
+  const submitCta = async (e: FormEvent) => {
     e.preventDefault();
     if (!valid(ctaEmail)) { setCtaErr('Please enter a valid email address.'); return; }
+    setCtaSending(true);
     setCtaErr('');
-    setCtaDone(true);
+    try {
+      await submitToFormspree(FORMSPREE_WAITLIST, { email: ctaEmail.trim() });
+      setCtaDone(true);
+    } catch {
+      setCtaErr('Something went wrong. Please try again.');
+    } finally {
+      setCtaSending(false);
+    }
   };
 
   return (
     <>
       <style>{`
         @keyframes filaUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fila-landing ::selection { background: #adcce6; color: #102a45; }
-        .fila-landing input::placeholder { color: #80add1; }
+        .fila-landing input::placeholder, .fila-landing textarea::placeholder { color: #80add1; }
         .fila-landing .fila-input:focus { border-color: #457aab; box-shadow: 0 0 0 3px rgba(69,122,171,0.15); }
         .fila-landing .fila-input-dark:focus { border-color: #adcce6; box-shadow: 0 0 0 3px rgba(173,204,230,0.2); }
         .fila-landing .fila-btn:hover { transform: translateY(-1px); box-shadow: 0 9px 24px rgba(36,74,115,0.36); }
         .fila-landing .fila-btn-light:hover { transform: translateY(-1px); background: #c2d9ee; }
         .fila-landing .fila-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(16,42,69,0.13); }
+        .fila-landing .fila-contact-link:hover { color: #adcce6 !important; }
         @media (max-width: 640px) {
           .fila-landing .fila-hero-badges { flex-direction: column; gap: 10px !important; }
           .fila-landing .fila-stats-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
@@ -98,6 +222,16 @@ export function Landing() {
         }
       `}</style>
       <div className="fila-landing" style={{ fontFamily: "'Inter', sans-serif", color: '#102a45', background: '#d6e6f5', overflowX: 'hidden' }}>
+
+        {/* HEADER */}
+        <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(214,230,245,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(173,204,230,0.4)', padding: '0 clamp(20px,5vw,56px)' }}>
+          <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+            <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
+            <button onClick={() => setContactOpen(true)} style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: 13, color: '#244a73', background: 'transparent', border: '1.5px solid #457aab', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', transition: 'background 0.2s, color 0.2s', display: 'flex', alignItems: 'center', gap: 7 }} onMouseEnter={e => { e.currentTarget.style.background = '#244a73'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#244a73'; }}>
+              <IconMail size={15} stroke={2} /> Contact
+            </button>
+          </div>
+        </header>
 
         {/* HERO */}
         <section style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'clamp(48px,6vw,72px) clamp(20px,5vw,56px) clamp(40px,5vw,56px)', maxWidth: 1180, margin: '0 auto', overflow: 'hidden' }}>
@@ -125,7 +259,7 @@ export function Landing() {
                 <>
                   <form onSubmit={submitHero} className="fila-form" style={{ display: 'flex', flexWrap: 'wrap', gap: 10, maxWidth: 540 }}>
                     <input ref={heroInputRef} value={heroEmail} onChange={e => { setHeroEmail(e.target.value); setHeroErr(''); }} type="email" placeholder="you@email.com" aria-label="Email address" className="fila-input" style={{ flex: '1 1 240px', minWidth: 0, fontFamily: "'Inter', sans-serif", fontWeight: 300, fontSize: 16, color: '#102a45', background: '#fff', border: '1px solid #adcce6', borderRadius: 10, padding: '15px 18px', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s' }} />
-                    <button type="submit" className="fila-btn" style={{ flex: '0 0 auto', fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: 15, color: '#fff', background: 'linear-gradient(135deg, #244a73 0%, #457aab 100%)', border: 'none', borderRadius: 10, padding: '15px 26px', cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 6px 18px rgba(36,74,115,0.28)' }}>Join the Waitlist</button>
+                    <button type="submit" disabled={heroSending} className="fila-btn" style={{ flex: '0 0 auto', fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: 15, color: '#fff', background: 'linear-gradient(135deg, #244a73 0%, #457aab 100%)', border: 'none', borderRadius: 10, padding: '15px 26px', cursor: heroSending ? 'wait' : 'pointer', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 6px 18px rgba(36,74,115,0.28)', opacity: heroSending ? 0.7 : 1 }}>{heroSending ? 'Joining...' : 'Join the Waitlist'}</button>
                   </form>
                   {heroErr && <div style={{ fontSize: 13.5, color: '#b04a4a', marginTop: 9, paddingLeft: 2 }}>{heroErr}</div>}
                 </>
@@ -234,7 +368,7 @@ export function Landing() {
               <>
                 <form onSubmit={submitCta} className="fila-form" style={{ display: 'flex', flexWrap: 'wrap', gap: 10, maxWidth: 520, margin: '0 auto' }}>
                   <input value={ctaEmail} onChange={e => { setCtaEmail(e.target.value); setCtaErr(''); }} type="email" placeholder="you@email.com" aria-label="Email address" className="fila-input-dark" style={{ flex: '1 1 240px', minWidth: 0, fontFamily: "'Inter', sans-serif", fontWeight: 300, fontSize: 16, color: '#fff', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(173,204,230,0.45)', borderRadius: 10, padding: '15px 18px', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s' }} />
-                  <button type="submit" className="fila-btn-light" style={{ flex: '0 0 auto', fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: 15, color: '#102a45', background: '#adcce6', border: 'none', borderRadius: 10, padding: '15px 26px', cursor: 'pointer', transition: 'transform 0.2s, background 0.2s' }}>Join the Waitlist</button>
+                  <button type="submit" disabled={ctaSending} className="fila-btn-light" style={{ flex: '0 0 auto', fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: 15, color: '#102a45', background: '#adcce6', border: 'none', borderRadius: 10, padding: '15px 26px', cursor: ctaSending ? 'wait' : 'pointer', transition: 'transform 0.2s, background 0.2s', opacity: ctaSending ? 0.7 : 1 }}>{ctaSending ? 'Joining...' : 'Join the Waitlist'}</button>
                 </form>
                 {ctaErr && <div style={{ fontSize: 13.5, color: '#f0b4b4', marginTop: 11 }}>{ctaErr}</div>}
               </>
@@ -258,6 +392,7 @@ export function Landing() {
           </div>
         </footer>
 
+        <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
       </div>
     </>
   );
