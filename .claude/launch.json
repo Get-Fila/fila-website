@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fila-website",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite"],
+      "cwd": "/Users/rachelbertler/fila-website",
+      "port": 5174,
+      "autoPort": true
+    }
+  ]
+}
