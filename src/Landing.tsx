@@ -387,7 +387,7 @@ export function Landing() {
               </ol>
             </div>
             <div style={{ marginTop: 24, fontWeight: 300, fontSize: 12, color: '#3d6d8f' }}>
-              &copy; {new Date().getFullYear()} Fila Holistic Health. All rights reserved.
+              &copy; {new Date().getFullYear()} My Fila, Inc. All rights reserved.
             </div>
           </div>
         </footer>
