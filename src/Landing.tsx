@@ -4,10 +4,9 @@ import {
   IconShieldCheck,
   IconUser,
   IconStethoscope,
-  IconDownload,
-  IconChartLine,
   IconSparkles,
-  IconShare,
+  IconHistory,
+  IconHeartHandshake,
   IconActivityHeartbeat,
   IconSearch,
   IconHeart,
@@ -16,19 +15,26 @@ import {
   IconX,
   IconMail,
   IconLoader2,
+  IconBrandInstagram,
+  IconBrandTiktok,
 } from "@tabler/icons-react";
 
-const FORMSPREE_WAITLIST = "mdarglpd";
-const FORMSPREE_CONTACT = "xqevqdgy";
+const JOTFORM_CONTACT = "262367145999171";
+const JOTFORM_WAITLIST = "262367262874163";
+const CONSENT_TEXT =
+  "I agree to receive emails about early access and product updates. See our Privacy Policy for more information.";
 
-async function submitToFormspree(formId: string, data: Record<string, string>) {
-  const res = await fetch(`https://formspree.io/f/${formId}`, {
+async function submitToJotform(formId: string, fields: Record<string, string>) {
+  const body = new FormData();
+  body.append("formID", formId);
+  body.append("website", ""); // honeypot — must stay empty
+  for (const [key, value] of Object.entries(fields)) body.append(key, value);
+  const res = await fetch(`https://submit.jotform.com/submit/${formId}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(data),
+    mode: "cors",
+    body,
   });
   if (!res.ok) throw new Error("Submission failed");
-  return res.json();
 }
 
 function useCountUp(end: number, duration = 1800) {
@@ -89,9 +95,11 @@ function ContactModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [consent, setConsent] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -108,22 +116,30 @@ function ContactModal({
     if (!open) {
       setSent(false);
       setError("");
-      setName("");
+      setFirstName("");
+      setLastName("");
       setEmail("");
       setMessage("");
+      setConsent(false);
     }
   }, [open]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !message.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !message.trim()) {
       setError("Please fill out all required fields.");
       return;
     }
     setSending(true);
     setError("");
     try {
-      await submitToFormspree(FORMSPREE_CONTACT, { name, email, message });
+      await submitToJotform(JOTFORM_CONTACT, {
+        "q3_fullName[first]": firstName.trim(),
+        "q3_fullName[last]": lastName.trim(),
+        q4_emailAddress: email.trim(),
+        q7_message7: message.trim(),
+        "q10_consent[]": CONSENT_TEXT,
+      });
       setSent(true);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -246,15 +262,26 @@ function ContactModal({
               onSubmit={submit}
               style={{ display: "flex", flexDirection: "column", gap: 10 }}
             >
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name*"
-                aria-label="Name"
-                required
-                className="fila-input"
-                style={inputBase}
-              />
+              <div style={{ display: "flex", gap: 10 }}>
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="First name*"
+                  aria-label="First name"
+                  required
+                  className="fila-input"
+                  style={{ ...inputBase, flex: 1, minWidth: 0 }}
+                />
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last name*"
+                  aria-label="Last name"
+                  required
+                  className="fila-input"
+                  style={{ ...inputBase, flex: 1, minWidth: 0 }}
+                />
+              </div>
               <input
                 value={email}
                 onChange={(e) => {
@@ -281,6 +308,46 @@ function ContactModal({
                 className="fila-input"
                 style={{ ...inputBase, resize: "vertical", minHeight: 80 }}
               />
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 9,
+                  fontSize: 13,
+                  fontWeight: 300,
+                  color: "#244a73",
+                  lineHeight: 1.5,
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  required
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  style={{
+                    marginTop: 2,
+                    width: 15,
+                    height: 15,
+                    flex: "none",
+                    accentColor: "#457aab",
+                    cursor: "pointer",
+                  }}
+                />
+                <span>
+                  I agree to receive emails about early access and product
+                  updates. See our{" "}
+                  <a
+                    href="https://www.getfila.com/privacy-policy/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#457aab", textDecoration: "underline" }}
+                  >
+                    Privacy Policy
+                  </a>{" "}
+                  for more information.
+                </span>
+              </label>
               {error && (
                 <div style={{ fontSize: 13.5, color: "#b04a4a" }}>{error}</div>
               )}
@@ -332,18 +399,20 @@ function ContactModal({
 
 export function Landing() {
   const [heroEmail, setHeroEmail] = useState("");
+  const [heroConsent, setHeroConsent] = useState(false);
   const [heroErr, setHeroErr] = useState("");
   const [heroDone, setHeroDone] = useState(false);
   const [heroSending, setHeroSending] = useState(false);
   const [ctaEmail, setCtaEmail] = useState("");
+  const [ctaConsent, setCtaConsent] = useState(false);
   const [ctaErr, setCtaErr] = useState("");
   const [ctaDone, setCtaDone] = useState(false);
   const [ctaSending, setCtaSending] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const heroInputRef = useRef<HTMLInputElement>(null);
 
-  const stat1 = useCountUp(14);
-  const stat2 = useCountUp(4000);
+  const stat1 = useCountUp(23);
+  const stat2 = useCountUp(100);
   const stat3 = useCountUp(65);
 
   const valid = useCallback(
@@ -360,7 +429,10 @@ export function Landing() {
     setHeroSending(true);
     setHeroErr("");
     try {
-      await submitToFormspree(FORMSPREE_WAITLIST, { email: heroEmail.trim() });
+      await submitToJotform(JOTFORM_WAITLIST, {
+        q4_emailAddress: heroEmail.trim(),
+        "q15_consent[]": CONSENT_TEXT,
+      });
       setHeroDone(true);
     } catch {
       setHeroErr("Something went wrong. Please try again.");
@@ -378,7 +450,10 @@ export function Landing() {
     setCtaSending(true);
     setCtaErr("");
     try {
-      await submitToFormspree(FORMSPREE_WAITLIST, { email: ctaEmail.trim() });
+      await submitToJotform(JOTFORM_WAITLIST, {
+        q4_emailAddress: ctaEmail.trim(),
+        "q15_consent[]": CONSENT_TEXT,
+      });
       setCtaDone(true);
     } catch {
       setCtaErr("Something went wrong. Please try again.");
@@ -444,34 +519,47 @@ export function Landing() {
             }}
           >
             <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
-            <button
-              onClick={() => setContactOpen(true)}
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 600,
-                fontSize: 13,
-                color: "#244a73",
-                background: "transparent",
-                border: "1.5px solid #457aab",
-                borderRadius: 8,
-                padding: "8px 18px",
-                cursor: "pointer",
-                transition: "background 0.2s, color 0.2s",
-                display: "flex",
-                alignItems: "center",
-                gap: 7,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#244a73";
-                e.currentTarget.style.color = "#fff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#244a73";
-              }}
-            >
-              <IconMail size={15} stroke={2} /> Contact
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+              <a
+                href="https://instagram.com/getfila"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Fila on Instagram"
+                style={{ color: "#244a73", display: "flex", transition: "color 0.2s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
+              >
+                <IconBrandInstagram size={20} stroke={1.75} />
+              </a>
+              <a
+                href="https://tiktok.com/@getfila"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Fila on TikTok"
+                style={{ color: "#244a73", display: "flex", transition: "color 0.2s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
+              >
+                <IconBrandTiktok size={20} stroke={1.75} />
+              </a>
+              <button
+                onClick={() => setContactOpen(true)}
+                aria-label="Contact us"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  color: "#244a73",
+                  display: "flex",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
+              >
+                <IconMail size={20} stroke={1.75} />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -502,7 +590,7 @@ export function Landing() {
                 animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both",
               }}
             >
-              Your health record,
+              Healthcare isn&rsquo;t built for you,
               <br />
               <span
                 style={{
@@ -513,7 +601,7 @@ export function Landing() {
                   color: "transparent",
                 }}
               >
-                finally yours.
+                but Fila is.
               </span>
             </h1>
             <p
@@ -527,10 +615,20 @@ export function Landing() {
                 animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.16s both",
               }}
             >
-              Fila is the first patient-owned longitudinal health record system
-              built for patients, not providers. One platform with records from
-              every provider, giving patients a comprehensive health history and
-              agency over their own health.
+              Fila is an AI companion that helps you navigate a broken system
+              by coaching you to advocate for yourself at every visit.
+            </p>
+
+            <p
+              style={{
+                fontWeight: 300,
+                fontSize: 13.5,
+                color: "#80add1",
+                margin: "0 0 14px",
+                animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both",
+              }}
+            >
+              Private beta launching soon. Waitlist members get first access.
             </p>
 
             <div
@@ -650,6 +748,47 @@ export function Landing() {
                     >
                       {heroSending ? "Joining..." : "Join the Waitlist"}
                     </button>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 9,
+                        width: "100%",
+                        fontSize: 13,
+                        fontWeight: 300,
+                        color: "#244a73",
+                        lineHeight: 1.5,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        required
+                        checked={heroConsent}
+                        onChange={(e) => setHeroConsent(e.target.checked)}
+                        style={{
+                          marginTop: 2,
+                          width: 15,
+                          height: 15,
+                          flex: "none",
+                          accentColor: "#457aab",
+                          cursor: "pointer",
+                        }}
+                      />
+                      <span>
+                        I agree to receive emails about early access and
+                        product updates. See our{" "}
+                        <a
+                          href="https://www.getfila.com/privacy-policy/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "#457aab", textDecoration: "underline" }}
+                        >
+                          Privacy Policy
+                        </a>{" "}
+                        for more information.
+                      </span>
+                    </label>
                   </form>
                   {heroErr && (
                     <div
@@ -667,18 +806,6 @@ export function Landing() {
               )}
             </div>
 
-            <p
-              style={{
-                fontWeight: 300,
-                fontSize: 13.5,
-                color: "#80add1",
-                margin: "18px 0 0",
-                animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.3s both",
-              }}
-            >
-              Private beta launching soon. Waitlist members get first access.
-            </p>
-
             <div
               className="fila-hero-badges"
               style={{
@@ -694,7 +821,7 @@ export function Landing() {
                 <span
                   style={{ fontWeight: 400, fontSize: 14, color: "#244a73" }}
                 >
-                  HIPAA-compliant
+                  Built with HIPAA-grade privacy and security practices
                 </span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -746,7 +873,7 @@ export function Landing() {
                   fontVariantNumeric: "tabular-nums",
                 }}
               >
-                {stat1.value}
+                {stat1.value}s
               </div>
               <div
                 style={{
@@ -767,7 +894,8 @@ export function Landing() {
                   margin: "0 auto",
                 }}
               >
-                providers seen by the average chronic care patient
+                is the amount of time patients have to explain their
+                concerns with a provider
                 <sup style={{ fontSize: "0.75em", opacity: 0.7 }}> 1</sup>
               </div>
             </div>
@@ -783,7 +911,7 @@ export function Landing() {
                   fontVariantNumeric: "tabular-nums",
                 }}
               >
-                {stat2.value.toLocaleString()}+
+                {stat2.value.toLocaleString()}k
               </div>
               <div
                 style={{
@@ -804,7 +932,8 @@ export function Landing() {
                   margin: "0 auto",
                 }}
               >
-                EHR systems in the U.S., most don't talk to each other
+                deaths per year could be prevented if patients become more
+                involved in their health
                 <sup style={{ fontSize: "0.75em", opacity: 0.7 }}> 2</sup>
               </div>
             </div>
@@ -868,7 +997,7 @@ export function Landing() {
                 maxWidth: 640,
               }}
             >
-              One platform. Your complete health story.
+              A patient advocate in your back pocket.
             </h2>
             <div
               className="fila-features-grid"
@@ -880,26 +1009,25 @@ export function Landing() {
             >
               {[
                 {
-                  icon: <IconDownload size={34} color="#adcce6" stroke={1.5} />,
-                  title: "Import",
-                  desc: "Pull records from any provider via FHIR, document upload, or digital scan.",
-                },
-                {
-                  icon: (
-                    <IconChartLine size={34} color="#adcce6" stroke={1.5} />
-                  ),
-                  title: "Track",
-                  desc: "Log and track conditions, symptoms, medications, visits, and results in one living timeline.",
+                  icon: <IconHistory size={34} color="#adcce6" stroke={1.5} />,
+                  title: "Consolidated History",
+                  desc: "Pull records from any provider and log symptoms, medications, visits, and test results to build a comprehensive living timeline.",
                 },
                 {
                   icon: <IconSparkles size={34} color="#adcce6" stroke={1.5} />,
-                  title: "Recommend",
-                  desc: "AI surfaces patterns across your record and coaches you on how to discuss them with your provider.",
+                  title: "Health Intelligence",
+                  desc: "AI-powered insights that surface patterns across the longitudinal record.",
                 },
                 {
-                  icon: <IconShare size={34} color="#adcce6" stroke={1.5} />,
-                  title: "Share",
-                  desc: "Send a unified, read-only health history summary to any provider in seconds.",
+                  icon: (
+                    <IconHeartHandshake
+                      size={34}
+                      color="#adcce6"
+                      stroke={1.5}
+                    />
+                  ),
+                  title: "Companion & Advocate",
+                  desc: "Coaches patients to discuss health insights with their provider and advocate for their health needs.",
                 },
               ].map((c) => (
                 <div
@@ -1210,6 +1338,48 @@ export function Landing() {
                   >
                     {ctaSending ? "Joining..." : "Join the Waitlist"}
                   </button>
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 9,
+                      width: "100%",
+                      textAlign: "left",
+                      fontSize: 13,
+                      fontWeight: 300,
+                      color: "#adcce6",
+                      lineHeight: 1.5,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      required
+                      checked={ctaConsent}
+                      onChange={(e) => setCtaConsent(e.target.checked)}
+                      style={{
+                        marginTop: 2,
+                        width: 15,
+                        height: 15,
+                        flex: "none",
+                        accentColor: "#adcce6",
+                        cursor: "pointer",
+                      }}
+                    />
+                    <span>
+                      I agree to receive emails about early access and
+                      product updates. See our{" "}
+                      <a
+                        href="https://www.getfila.com/privacy-policy/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#fff", textDecoration: "underline" }}
+                      >
+                        Privacy Policy
+                      </a>{" "}
+                      for more information.
+                    </span>
+                  </label>
                 </form>
                 {ctaErr && (
                   <div
@@ -1249,13 +1419,27 @@ export function Landing() {
                 }}
               >
                 <li>
-                  Anderson, G. (2010).{" "}
-                  <em>Chronic Care: Making the Case for Ongoing Care</em>.
-                  Robert Wood Johnson Foundation.
+                  <em>Time to Talk</em>. PMC, NIH.{" "}
+                  <a
+                    href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1783704/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#5a8ab0" }}
+                  >
+                    pmc.ncbi.nlm.nih.gov/articles/PMC1783704
+                  </a>
                 </li>
                 <li>
-                  Wang, T. (2018). A framework for performance comparison among
-                  major electronic health record systems. <em>PMC</em>.
+                  Deaths preventable in the U.S. by improvements in use of
+                  clinical preventive services. <em>PubMed</em>.{" "}
+                  <a
+                    href="https://pubmed.ncbi.nlm.nih.gov/20494236/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#5a8ab0" }}
+                  >
+                    pubmed.ncbi.nlm.nih.gov/20494236
+                  </a>
                 </li>
                 <li>
                   Graber, M. L., Franklin, N., &amp; Gordon, R. (2005).
