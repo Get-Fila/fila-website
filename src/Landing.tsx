@@ -572,12 +572,11 @@ export function Landing() {
             justifyContent: "center",
             padding:
               "clamp(48px,6vw,72px) clamp(20px,5vw,56px) clamp(40px,5vw,56px)",
-            maxWidth: 1180,
-            margin: "0 auto",
             overflow: "hidden",
           }}
         >
-          <div style={{ position: "relative", zIndex: 2, maxWidth: 760 }}>
+          <div style={{ maxWidth: 1180, margin: "0 auto", width: "100%" }}>
+          <div style={{ position: "relative", zIndex: 2, maxWidth: 1180 }}>
             <h1
               style={{
                 fontFamily: "'Montserrat', sans-serif",
@@ -590,8 +589,7 @@ export function Landing() {
                 animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both",
               }}
             >
-              Healthcare isn&rsquo;t built for you,
-              <br />
+              Healthcare isn&rsquo;t built for you,{" "}
               <span
                 style={{
                   background: "linear-gradient(135deg, #244a73, #adcce6)",
@@ -610,8 +608,8 @@ export function Landing() {
                 fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
                 lineHeight: 1.6,
                 color: "#244a73",
-                maxWidth: 620,
-                margin: "0 0 36px",
+                maxWidth: 900,
+                margin: "0 0 22px",
                 animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.16s both",
               }}
             >
@@ -622,7 +620,7 @@ export function Landing() {
             <p
               style={{
                 fontWeight: 300,
-                fontSize: 13.5,
+                fontSize: 15,
                 color: "#80add1",
                 margin: "0 0 14px",
                 animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both",
@@ -696,7 +694,7 @@ export function Landing() {
                       display: "flex",
                       flexWrap: "wrap",
                       gap: 10,
-                      maxWidth: 540,
+                      maxWidth: 700,
                     }}
                   >
                     <input
@@ -754,6 +752,7 @@ export function Landing() {
                         alignItems: "flex-start",
                         gap: 9,
                         width: "100%",
+                        marginTop: 10,
                         fontSize: 13,
                         fontWeight: 300,
                         color: "#244a73",
@@ -841,6 +840,7 @@ export function Landing() {
                 </span>
               </div>
             </div>
+          </div>
           </div>
         </section>
 
@@ -1344,6 +1344,7 @@ export function Landing() {
                       alignItems: "flex-start",
                       gap: 9,
                       width: "100%",
+                      marginTop: 10,
                       textAlign: "left",
                       fontSize: 13,
                       fontWeight: 300,
