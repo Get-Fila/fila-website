@@ -12,6 +12,9 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         privacyPolicy: resolve(__dirname, "privacy-policy/index.html"),
+        help: resolve(__dirname, "help/index.html"),
+        helpDeleteAccount: resolve(__dirname, "help/delete-account/index.html"),
+        helpDeleteRecords: resolve(__dirname, "help/delete-records/index.html"),
       },
     },
   },
