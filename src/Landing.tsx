@@ -1472,6 +1472,13 @@ export function Landing() {
               >
                 Privacy Policy
               </a>
+              <a
+                href="/help/"
+                className="fila-contact-link"
+                style={{ color: "#5a8ab0", transition: "color 0.2s" }}
+              >
+                Help
+              </a>
             </div>
           </div>
         </footer>

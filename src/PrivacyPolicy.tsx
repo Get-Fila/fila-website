@@ -1,6 +1,6 @@
 import filaLogo from "./Fila_Gradient_Transparent.png";
 
-const EFFECTIVE_DATE = "August 17, 2026";
+const EFFECTIVE_DATE = "September 9, 2026";
 
 const sectionTitle: React.CSSProperties = {
   fontFamily: "'Montserrat', sans-serif",
@@ -122,8 +122,8 @@ export function PrivacyPolicy() {
             My Fila is designed to help you centralize and understand your own
             health records. Because that involves sensitive health information,
             we've tried to be specific here rather than generic. If anything
-            below doesn't match how we actually operate, tell us and we'll fix
-            it before this goes live.
+            below doesn't match how we actually operate, tell us and we'll
+            address the discrepancy.
           </p>
 
           <h2 style={sectionTitle}>1. Information We Collect</h2>
@@ -230,13 +230,24 @@ export function PrivacyPolicy() {
           <h2 style={sectionTitle}>5. Data Retention &amp; Deletion</h2>
           <p style={body}>
             We retain your information for as long as your account is active.
-            You may request deletion of your account and all associated data at
-            any time by contacting us at{" "}
-            <a href="mailto:engineering@getfila.com" style={link}>
-              engineering@getfila.com
-            </a>
-            .
+            You can delete your data yourself from within the app at any time:
           </p>
+          <ul style={list}>
+            <li>
+              <a href="/help/delete-account/" style={link}>
+                Delete your Fila account
+              </a>{" "}
+              — permanently removes your account and all associated data,
+              immediately and without a waiting period.
+            </li>
+            <li>
+              <a href="/help/delete-records/" style={link}>
+                Delete individual records and data
+              </a>{" "}
+              — remove a single health record or individual entries without
+              deleting your whole account.
+            </li>
+          </ul>
 
           <h2 style={sectionTitle}>6. Your Choices</h2>
           <ul style={list}>
