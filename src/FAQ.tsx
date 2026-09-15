@@ -34,7 +34,7 @@ export function FAQ() {
         padding: "clamp(64px,8vw,100px) clamp(20px,5vw,56px)",
       }}
     >
-      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1040, margin: "0 auto" }}>
         <h2
           style={{
             fontFamily: "'Montserrat', sans-serif",
