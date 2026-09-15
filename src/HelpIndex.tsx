@@ -18,11 +18,12 @@ const ARTICLES = [
 const card: React.CSSProperties = {
   display: "block",
   textDecoration: "none",
-  background: "#eef5fc",
-  border: "1px solid rgba(69,122,171,0.22)",
+  background: "#fff",
+  border: "1px solid rgba(173,204,230,0.5)",
   borderRadius: 12,
   padding: "20px 22px",
   margin: "0 0 16px",
+  transition: "transform 0.25s, box-shadow 0.25s",
 };
 
 export function HelpIndex() {
@@ -34,7 +35,7 @@ export function HelpIndex() {
       </p>
 
       {ARTICLES.map((a) => (
-        <a key={a.href} href={a.href} style={card}>
+        <a key={a.href} href={a.href} className="fila-card" style={card}>
           <span
             style={{
               display: "block",

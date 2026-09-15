@@ -3,19 +3,14 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { WaitlistSection } from "./WaitlistSection";
 import { ContactModal } from "./shared";
+import { GlobalStyles } from "./GlobalStyles";
 
 export function JoinWaitlist() {
   const [contactOpen, setContactOpen] = useState(false);
 
   return (
     <>
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .fila-landing ::selection { background: #adcce6; color: #102a45; }
-        .fila-landing input::placeholder { color: #80add1; }
-        .fila-landing .fila-input:focus { border-color: #457aab; box-shadow: 0 0 0 3px rgba(69,122,171,0.15); }
-        .fila-landing .fila-btn:hover { transform: translateY(-1px); box-shadow: 0 9px 24px rgba(36,74,115,0.36); }
-      `}</style>
+      <GlobalStyles />
       <div
         className="fila-landing"
         style={{

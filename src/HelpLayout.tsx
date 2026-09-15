@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ContactModal } from "./shared";
+import { GlobalStyles } from "./GlobalStyles";
 
 export const h1: React.CSSProperties = {
   fontFamily: "'Montserrat', sans-serif",
@@ -56,7 +57,7 @@ export const note: React.CSSProperties = {
   fontSize: 14.5,
   lineHeight: 1.7,
   color: "#244a73",
-  background: "#e7f1fb",
+  background: "rgba(69,122,171,0.08)",
   border: "1px solid rgba(69,122,171,0.25)",
   borderRadius: 10,
   padding: "14px 18px",
@@ -77,50 +78,53 @@ export function HelpLayout({
   const [contactOpen, setContactOpen] = useState(false);
 
   return (
-    <div
-      className="fila-landing"
-      style={{
-        fontFamily: "'Inter', sans-serif",
-        color: "#102a45",
-        background: "#d6e6f5",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Header onContactClick={() => setContactOpen(true)} />
-
-      {/* CONTENT */}
-      <main
+    <>
+      <GlobalStyles />
+      <div
+        className="fila-landing"
         style={{
-          flex: 1,
-          padding: "clamp(48px,6vw,72px) clamp(20px,5vw,56px)",
+          fontFamily: "'Inter', sans-serif",
+          color: "#102a45",
+          background: "#d6e6f5",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <div style={{ maxWidth: 760, margin: "0 auto" }}>
-          {showBack && (
-            <a
-              href={backHref}
-              style={{
-                display: "inline-block",
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 600,
-                fontSize: 13,
-                color: "#457aab",
-                textDecoration: "none",
-                marginBottom: 20,
-              }}
-            >
-              {backLabel}
-            </a>
-          )}
-          {children}
-        </div>
-      </main>
+        <Header onContactClick={() => setContactOpen(true)} />
 
-      <Footer />
+        {/* CONTENT */}
+        <main
+          style={{
+            flex: 1,
+            padding: "clamp(48px,6vw,72px) clamp(20px,5vw,56px)",
+          }}
+        >
+          <div style={{ maxWidth: 760, margin: "0 auto" }}>
+            {showBack && (
+              <a
+                href={backHref}
+                style={{
+                  display: "inline-block",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  color: "#457aab",
+                  textDecoration: "none",
+                  marginBottom: 20,
+                }}
+              >
+                {backLabel}
+              </a>
+            )}
+            {children}
+          </div>
+        </main>
 
-      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
-    </div>
+        <Footer />
+
+        <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+      </div>
+    </>
   );
 }

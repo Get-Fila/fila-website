@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 import filaLogo from "./Fila_Gradient_Transparent.png";
 
 const navLinkStyle: React.CSSProperties = {
@@ -13,17 +15,22 @@ function NavLink({
   href,
   children,
   external,
+  onClick,
+  style,
 }: {
   href: string;
   children: React.ReactNode;
   external?: boolean;
+  onClick?: () => void;
+  style?: React.CSSProperties;
 }) {
   return (
     <a
       href={href}
-      style={navLinkStyle}
+      style={{ ...navLinkStyle, ...style }}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
+      onClick={onClick}
       onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
       onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
     >
@@ -32,7 +39,23 @@ function NavLink({
   );
 }
 
+const loginLinkStyle: React.CSSProperties = {
+  fontFamily: "'Montserrat', sans-serif",
+  fontWeight: 600,
+  fontSize: 14,
+  color: "#fff",
+  textDecoration: "none",
+  background: "linear-gradient(135deg, #244a73 0%, #457aab 100%)",
+  padding: "9px 18px",
+  borderRadius: 9,
+  transition: "transform 0.2s, box-shadow 0.2s",
+  boxShadow: "0 4px 14px rgba(36,74,115,0.24)",
+};
+
 export function Header({ onContactClick }: { onContactClick?: () => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header
       style={{
@@ -46,6 +69,16 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
         padding: "0 clamp(20px,5vw,56px)",
       }}
     >
+      <style>{`
+        .fila-header-nav { display: flex; }
+        .fila-header-toggle { display: none; }
+        .fila-header-dropdown { display: none; }
+        @media (max-width: 719px) {
+          .fila-header-nav { display: none; }
+          .fila-header-toggle { display: flex; }
+          .fila-header-dropdown.fila-open { display: flex; }
+        }
+      `}</style>
       <div
         style={{
           maxWidth: 1180,
@@ -54,15 +87,16 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
           alignItems: "center",
           justifyContent: "space-between",
           height: 64,
-          gap: 20,
+          gap: 16,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", flex: "none" }}>
           <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
         </div>
+
         <div
+          className="fila-header-nav"
           style={{
-            display: "flex",
             alignItems: "center",
             gap: "16px 28px",
             flexWrap: "wrap",
@@ -88,24 +122,83 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
               Contact
             </button>
           )}
-          <a
-            href="https://app.getfila.com/login"
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: 14,
-              color: "#fff",
-              textDecoration: "none",
-              background: "linear-gradient(135deg, #244a73 0%, #457aab 100%)",
-              padding: "9px 18px",
-              borderRadius: 9,
-              transition: "transform 0.2s, box-shadow 0.2s",
-              boxShadow: "0 4px 14px rgba(36,74,115,0.24)",
-            }}
-          >
+          <a href="https://app.getfila.com/login" style={loginLinkStyle}>
             Login
           </a>
         </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <a
+            href="https://app.getfila.com/login"
+            className="fila-header-toggle"
+            style={{ ...loginLinkStyle, padding: "8px 16px" }}
+          >
+            Login
+          </a>
+          <button
+            className="fila-header-toggle"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              background: "transparent",
+              border: "none",
+              padding: 4,
+              cursor: "pointer",
+              color: "#244a73",
+            }}
+          >
+            {menuOpen ? (
+              <IconX size={24} stroke={1.8} />
+            ) : (
+              <IconMenu2 size={24} stroke={1.8} />
+            )}
+          </button>
+        </div>
+      </div>
+
+      <div
+        className={`fila-header-dropdown${menuOpen ? " fila-open" : ""}`}
+        style={{
+          flexDirection: "column",
+          gap: 4,
+          padding: "4px 0 16px",
+          borderTop: "1px solid rgba(173,204,230,0.4)",
+        }}
+      >
+        <NavLink href="/" onClick={closeMenu} style={{ padding: "12px 0" }}>
+          Home
+        </NavLink>
+        <NavLink href="/about/" onClick={closeMenu} style={{ padding: "12px 0" }}>
+          About
+        </NavLink>
+        <NavLink
+          href="/join-waitlist/"
+          onClick={closeMenu}
+          style={{ padding: "12px 0" }}
+        >
+          Join the Waitlist
+        </NavLink>
+        {onContactClick && (
+          <button
+            onClick={() => {
+              closeMenu();
+              onContactClick();
+            }}
+            style={{
+              ...navLinkStyle,
+              textAlign: "left",
+              background: "transparent",
+              border: "none",
+              padding: "12px 0",
+              cursor: "pointer",
+            }}
+          >
+            Contact
+          </button>
+        )}
       </div>
     </header>
   );

@@ -78,6 +78,28 @@ export function Footer({ children }: { children?: React.ReactNode }) {
 
         <div
           style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 28,
+          }}
+        >
+          <a
+            href="https://teachmehipaa.com"
+            rel="dofollow"
+            title="HIPAA Compliance Training and Certification"
+            aria-label="Visit TeachMeHIPAA for HIPAA Compliance Training"
+          >
+            <img
+              src="https://cdn.tme.so/hipaa-compliant-hexigon.png"
+              alt="HIPAA Compliant Certification Badge - TeachMeHIPAA"
+              title="HIPAA Compliance Training and Certification"
+              style={{ height: 64 }}
+            />
+          </a>
+        </div>
+
+        <div
+          style={{
             marginTop: 24,
             display: "flex",
             flexWrap: "wrap",

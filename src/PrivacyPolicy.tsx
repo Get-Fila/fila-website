@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ContactModal } from "./shared";
+import { GlobalStyles } from "./GlobalStyles";
 
 const EFFECTIVE_DATE = "September 9, 2026";
 
@@ -33,7 +34,9 @@ export function PrivacyPolicy() {
   const [contactOpen, setContactOpen] = useState(false);
 
   return (
-    <div
+    <>
+      <GlobalStyles />
+      <div
       className="fila-landing"
       style={{
         fontFamily: "'Inter', sans-serif",
@@ -258,6 +261,7 @@ export function PrivacyPolicy() {
       <Footer />
 
       <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
-    </div>
+      </div>
+    </>
   );
 }
