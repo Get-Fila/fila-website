@@ -39,19 +39,6 @@ function NavLink({
   );
 }
 
-const loginLinkStyle: React.CSSProperties = {
-  fontFamily: "'Montserrat', sans-serif",
-  fontWeight: 600,
-  fontSize: 14,
-  color: "#fff",
-  textDecoration: "none",
-  background: "linear-gradient(135deg, #244a73 0%, #457aab 100%)",
-  padding: "9px 18px",
-  borderRadius: 9,
-  transition: "transform 0.2s, box-shadow 0.2s",
-  boxShadow: "0 4px 14px rgba(36,74,115,0.24)",
-};
-
 export function Header({ onContactClick }: { onContactClick?: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
@@ -122,41 +109,29 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
               Contact
             </button>
           )}
-          <a href="https://app.getfila.com/login" style={loginLinkStyle}>
-            Login
-          </a>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <a
-            href="https://app.getfila.com/login"
-            className="fila-header-toggle"
-            style={{ ...loginLinkStyle, padding: "8px 16px" }}
-          >
-            Login
-          </a>
-          <button
-            className="fila-header-toggle"
-            onClick={() => setMenuOpen((o) => !o)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              background: "transparent",
-              border: "none",
-              padding: 4,
-              cursor: "pointer",
-              color: "#244a73",
-            }}
-          >
-            {menuOpen ? (
-              <IconX size={24} stroke={1.8} />
-            ) : (
-              <IconMenu2 size={24} stroke={1.8} />
-            )}
-          </button>
-        </div>
+        <button
+          className="fila-header-toggle"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            background: "transparent",
+            border: "none",
+            padding: 4,
+            cursor: "pointer",
+            color: "#244a73",
+          }}
+        >
+          {menuOpen ? (
+            <IconX size={24} stroke={1.8} />
+          ) : (
+            <IconMenu2 size={24} stroke={1.8} />
+          )}
+        </button>
       </div>
 
       <div
