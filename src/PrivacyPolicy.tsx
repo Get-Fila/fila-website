@@ -1,4 +1,7 @@
-import filaLogo from "./Fila_Gradient_Transparent.png";
+import { useState } from "react";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { ContactModal } from "./shared";
 
 const EFFECTIVE_DATE = "September 9, 2026";
 
@@ -27,6 +30,8 @@ const list: React.CSSProperties = {
 const link: React.CSSProperties = { color: "#457aab" };
 
 export function PrivacyPolicy() {
+  const [contactOpen, setContactOpen] = useState(false);
+
   return (
     <div
       className="fila-landing"
@@ -39,46 +44,7 @@ export function PrivacyPolicy() {
         flexDirection: "column",
       }}
     >
-      {/* HEADER */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: "rgba(214,230,245,0.85)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(173,204,230,0.4)",
-          padding: "0 clamp(20px,5vw,56px)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1180,
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            height: 64,
-          }}
-        >
-          <a href="/" style={{ display: "flex", alignItems: "center" }}>
-            <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
-          </a>
-          <a
-            href="/"
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: 13,
-              color: "#244a73",
-              textDecoration: "none",
-            }}
-          >
-            &larr; Back to home
-          </a>
-        </div>
-      </header>
+      <Header onContactClick={() => setContactOpen(true)} />
 
       {/* CONTENT */}
       <main
@@ -289,25 +255,9 @@ export function PrivacyPolicy() {
         </div>
       </main>
 
-      {/* FOOTER */}
-      <footer
-        style={{
-          background: "#0c2238",
-          padding: "clamp(24px,3vw,32px) clamp(20px,5vw,56px)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1040,
-            margin: "0 auto",
-            fontWeight: 300,
-            fontSize: 12,
-            color: "#3d6d8f",
-          }}
-        >
-          &copy; {new Date().getFullYear()} My Fila, Inc. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
+
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
   );
 }

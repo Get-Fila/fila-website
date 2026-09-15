@@ -1,5 +1,7 @@
-import type { ReactNode } from "react";
-import filaLogo from "./Fila_Gradient_Transparent.png";
+import { useState, type ReactNode } from "react";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { ContactModal } from "./shared";
 
 export const h1: React.CSSProperties = {
   fontFamily: "'Montserrat', sans-serif",
@@ -70,6 +72,8 @@ export function HelpLayout({
   backHref?: string;
   backLabel?: string;
 }) {
+  const [contactOpen, setContactOpen] = useState(false);
+
   return (
     <div
       className="fila-landing"
@@ -82,46 +86,7 @@ export function HelpLayout({
         flexDirection: "column",
       }}
     >
-      {/* HEADER */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: "rgba(214,230,245,0.85)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(173,204,230,0.4)",
-          padding: "0 clamp(20px,5vw,56px)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1180,
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            height: 64,
-          }}
-        >
-          <a href="/" style={{ display: "flex", alignItems: "center" }}>
-            <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
-          </a>
-          <a
-            href={backHref}
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: 13,
-              color: "#244a73",
-              textDecoration: "none",
-            }}
-          >
-            {backLabel}
-          </a>
-        </div>
-      </header>
+      <Header onContactClick={() => setContactOpen(true)} />
 
       {/* CONTENT */}
       <main
@@ -130,40 +95,28 @@ export function HelpLayout({
           padding: "clamp(48px,6vw,72px) clamp(20px,5vw,56px)",
         }}
       >
-        <div style={{ maxWidth: 760, margin: "0 auto" }}>{children}</div>
+        <div style={{ maxWidth: 760, margin: "0 auto" }}>
+          <a
+            href={backHref}
+            style={{
+              display: "inline-block",
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 600,
+              fontSize: 13,
+              color: "#457aab",
+              textDecoration: "none",
+              marginBottom: 20,
+            }}
+          >
+            {backLabel}
+          </a>
+          {children}
+        </div>
       </main>
 
-      {/* FOOTER */}
-      <footer
-        style={{
-          background: "#0c2238",
-          padding: "clamp(24px,3vw,32px) clamp(20px,5vw,56px)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1040,
-            margin: "0 auto",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            gap: "6px 14px",
-            fontWeight: 300,
-            fontSize: 12,
-            color: "#3d6d8f",
-          }}
-        >
-          <span>
-            &copy; {new Date().getFullYear()} My Fila, Inc. All rights reserved.
-          </span>
-          <a href="/privacy-policy/" style={{ color: "#5a8ab0" }}>
-            Privacy Policy
-          </a>
-          <a href="/help/" style={{ color: "#5a8ab0" }}>
-            Help
-          </a>
-        </div>
-      </footer>
+      <Footer />
+
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
   );
 }

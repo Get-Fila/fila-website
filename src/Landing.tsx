@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, useCallback, FormEvent } from "react";
-import filaLogo from "./Fila_Gradient_Transparent.png";
+import { useState, useRef, useEffect } from "react";
 import {
   IconShieldCheck,
   IconUser,
@@ -11,31 +10,11 @@ import {
   IconSearch,
   IconHeart,
   IconUsersGroup,
-  IconCheck,
-  IconX,
-  IconMail,
-  IconLoader2,
-  IconBrandInstagram,
-  IconBrandTiktok,
 } from "@tabler/icons-react";
-
-const JOTFORM_CONTACT = "262367145999171";
-const JOTFORM_WAITLIST = "262367262874163";
-const CONSENT_TEXT =
-  "I agree to receive emails about early access and product updates. See our Privacy Policy for more information.";
-
-async function submitToJotform(formId: string, fields: Record<string, string>) {
-  const body = new FormData();
-  body.append("formID", formId);
-  body.append("website", ""); // honeypot — must stay empty
-  for (const [key, value] of Object.entries(fields)) body.append(key, value);
-  const res = await fetch(`https://submit.jotform.com/submit/${formId}`, {
-    method: "POST",
-    mode: "cors",
-    body,
-  });
-  if (!res.ok) throw new Error("Submission failed");
-}
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { WaitlistSection } from "./WaitlistSection";
+import { ContactModal } from "./shared";
 
 function useCountUp(end: number, duration = 1800) {
   const [value, setValue] = useState(0);
@@ -73,394 +52,12 @@ function useCountUp(end: number, duration = 1800) {
   return { value, ref };
 }
 
-const inputBase: React.CSSProperties = {
-  width: "100%",
-  boxSizing: "border-box",
-  fontFamily: "'Inter', sans-serif",
-  fontWeight: 300,
-  fontSize: 14,
-  color: "#102a45",
-  background: "#fff",
-  border: "1px solid #adcce6",
-  borderRadius: 10,
-  padding: "10px 13px",
-  outline: "none",
-  transition: "border-color 0.2s, box-shadow 0.2s",
-};
-
-function ContactModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [consent, setConsent] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) {
-      setSent(false);
-      setError("");
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setMessage("");
-      setConsent(false);
-    }
-  }, [open]);
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !message.trim()) {
-      setError("Please fill out all required fields.");
-      return;
-    }
-    setSending(true);
-    setError("");
-    try {
-      await submitToJotform(JOTFORM_CONTACT, {
-        "q3_fullName[first]": firstName.trim(),
-        "q3_fullName[last]": lastName.trim(),
-        q4_emailAddress: email.trim(),
-        q7_message7: message.trim(),
-        "q10_consent[]": CONSENT_TEXT,
-      });
-      setSent(true);
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  if (!open) return null;
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        background: "rgba(16,42,69,0.55)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "#fff",
-          borderRadius: 16,
-          padding: "24px",
-          maxWidth: 360,
-          width: "100%",
-          position: "relative",
-          boxShadow: "0 24px 64px rgba(16,42,69,0.2)",
-        }}
-      >
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          style={{
-            position: "absolute",
-            top: 14,
-            right: 14,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 4,
-          }}
-        >
-          <IconX size={20} color="#80add1" stroke={1.8} />
-        </button>
-
-        {sent ? (
-          <div style={{ textAlign: "center", padding: "8px 0" }}>
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: "50%",
-                background: "rgba(69,122,171,0.1)",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 14,
-              }}
-            >
-              <IconCheck size={24} color="#457aab" stroke={2.2} />
-            </div>
-            <div
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                fontSize: 19,
-                color: "#102a45",
-                marginBottom: 6,
-              }}
-            >
-              Message sent!
-            </div>
-            <p
-              style={{
-                fontWeight: 300,
-                fontSize: 14.5,
-                color: "#244a73",
-                lineHeight: 1.5,
-                margin: 0,
-              }}
-            >
-              Thanks for reaching out. We'll get back to you soon.
-            </p>
-          </div>
-        ) : (
-          <>
-            <div
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                fontSize: 20,
-                color: "#102a45",
-                marginBottom: 4,
-              }}
-            >
-              Get in touch
-            </div>
-            <p
-              style={{
-                fontWeight: 300,
-                fontSize: 14,
-                color: "#244a73",
-                lineHeight: 1.5,
-                margin: "0 0 12px",
-              }}
-            >
-              Questions, feedback, or partnership inquiries? We'd love to hear
-              from you.
-            </p>
-
-            <form
-              onSubmit={submit}
-              style={{ display: "flex", flexDirection: "column", gap: 10 }}
-            >
-              <div style={{ display: "flex", gap: 10 }}>
-                <input
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name*"
-                  aria-label="First name"
-                  required
-                  className="fila-input"
-                  style={{ ...inputBase, flex: 1, minWidth: 0 }}
-                />
-                <input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last name*"
-                  aria-label="Last name"
-                  required
-                  className="fila-input"
-                  style={{ ...inputBase, flex: 1, minWidth: 0 }}
-                />
-              </div>
-              <input
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
-                }}
-                type="email"
-                placeholder="you@email.com*"
-                aria-label="Email"
-                required
-                className="fila-input"
-                style={inputBase}
-              />
-              <textarea
-                value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
-                  setError("");
-                }}
-                placeholder="Your message*"
-                aria-label="Message"
-                required
-                rows={4}
-                className="fila-input"
-                style={{ ...inputBase, resize: "vertical", minHeight: 80 }}
-              />
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 9,
-                  fontSize: 13,
-                  fontWeight: 300,
-                  color: "#244a73",
-                  lineHeight: 1.5,
-                  cursor: "pointer",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  required
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  style={{
-                    marginTop: 2,
-                    width: 15,
-                    height: 15,
-                    flex: "none",
-                    accentColor: "#457aab",
-                    cursor: "pointer",
-                  }}
-                />
-                <span>
-                  I agree to receive emails about early access and product
-                  updates. See our{" "}
-                  <a
-                    href="https://www.getfila.com/privacy-policy/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "#457aab", textDecoration: "underline" }}
-                  >
-                    Privacy Policy
-                  </a>{" "}
-                  for more information.
-                </span>
-              </label>
-              {error && (
-                <div style={{ fontSize: 13.5, color: "#b04a4a" }}>{error}</div>
-              )}
-              <button
-                type="submit"
-                disabled={sending}
-                className="fila-btn"
-                style={{
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 600,
-                  fontSize: 15,
-                  color: "#fff",
-                  background:
-                    "linear-gradient(135deg, #244a73 0%, #457aab 100%)",
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "12px 24px",
-                  cursor: sending ? "wait" : "pointer",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                  boxShadow: "0 6px 18px rgba(36,74,115,0.28)",
-                  opacity: sending ? 0.7 : 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                }}
-              >
-                {sending ? (
-                  <>
-                    <IconLoader2
-                      size={18}
-                      color="#fff"
-                      stroke={2}
-                      style={{ animation: "spin 1s linear infinite" }}
-                    />{" "}
-                    Sending...
-                  </>
-                ) : (
-                  "Send Message"
-                )}
-              </button>
-            </form>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function Landing() {
-  const [heroEmail, setHeroEmail] = useState("");
-  const [heroConsent, setHeroConsent] = useState(false);
-  const [heroErr, setHeroErr] = useState("");
-  const [heroDone, setHeroDone] = useState(false);
-  const [heroSending, setHeroSending] = useState(false);
-  const [ctaEmail, setCtaEmail] = useState("");
-  const [ctaConsent, setCtaConsent] = useState(false);
-  const [ctaErr, setCtaErr] = useState("");
-  const [ctaDone, setCtaDone] = useState(false);
-  const [ctaSending, setCtaSending] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
-  const heroInputRef = useRef<HTMLInputElement>(null);
 
   const stat1 = useCountUp(23);
   const stat2 = useCountUp(100);
   const stat3 = useCountUp(65);
-
-  const valid = useCallback(
-    (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((e || "").trim()),
-    [],
-  );
-
-  const submitHero = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!valid(heroEmail)) {
-      setHeroErr("Please enter a valid email address.");
-      return;
-    }
-    setHeroSending(true);
-    setHeroErr("");
-    try {
-      await submitToJotform(JOTFORM_WAITLIST, {
-        q4_emailAddress: heroEmail.trim(),
-        "q15_consent[]": CONSENT_TEXT,
-      });
-      setHeroDone(true);
-    } catch {
-      setHeroErr("Something went wrong. Please try again.");
-    } finally {
-      setHeroSending(false);
-    }
-  };
-
-  const submitCta = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!valid(ctaEmail)) {
-      setCtaErr("Please enter a valid email address.");
-      return;
-    }
-    setCtaSending(true);
-    setCtaErr("");
-    try {
-      await submitToJotform(JOTFORM_WAITLIST, {
-        q4_emailAddress: ctaEmail.trim(),
-        "q15_consent[]": CONSENT_TEXT,
-      });
-      setCtaDone(true);
-    } catch {
-      setCtaErr("Something went wrong. Please try again.");
-    } finally {
-      setCtaSending(false);
-    }
-  };
 
   return (
     <>
@@ -495,73 +92,7 @@ export function Landing() {
           background: "#d6e6f5",
         }}
       >
-        {/* HEADER */}
-        <header
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 100,
-            background: "rgba(214,230,245,0.85)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(173,204,230,0.4)",
-            padding: "0 clamp(20px,5vw,56px)",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: 1180,
-              margin: "0 auto",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              height: 64,
-            }}
-          >
-            <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
-            <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-              <a
-                href="https://instagram.com/getfila"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Fila on Instagram"
-                style={{ color: "#244a73", display: "flex", transition: "color 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
-              >
-                <IconBrandInstagram size={20} stroke={1.75} />
-              </a>
-              <a
-                href="https://tiktok.com/@getfila"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Fila on TikTok"
-                style={{ color: "#244a73", display: "flex", transition: "color 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
-              >
-                <IconBrandTiktok size={20} stroke={1.75} />
-              </a>
-              <button
-                onClick={() => setContactOpen(true)}
-                aria-label="Contact us"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  color: "#244a73",
-                  display: "flex",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#457aab")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#244a73")}
-              >
-                <IconMail size={20} stroke={1.75} />
-              </button>
-            </div>
-          </div>
-        </header>
+        <Header onContactClick={() => setContactOpen(true)} />
 
         {/* HERO */}
         <section
@@ -617,200 +148,12 @@ export function Landing() {
               by coaching you to advocate for yourself at every visit.
             </p>
 
-            <p
-              style={{
-                fontWeight: 300,
-                fontSize: 15,
-                color: "#80add1",
-                margin: "0 0 14px",
-                animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both",
-              }}
-            >
-              Private beta launching soon. Waitlist members get first access.
-            </p>
-
-            <div
-              style={{
-                animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.24s both",
-              }}
-            >
-              {heroDone ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 13,
-                    background: "#fff",
-                    border: "1px solid #adcce6",
-                    borderRadius: 12,
-                    padding: "18px 22px",
-                    maxWidth: 540,
-                    boxShadow: "0 8px 24px rgba(16,42,69,0.08)",
-                  }}
-                >
-                  <div
-                    style={{
-                      flex: "none",
-                      width: 38,
-                      height: 38,
-                      borderRadius: "50%",
-                      background: "#457aab",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <IconCheck size={20} color="#fff" stroke={2.4} />
-                  </div>
-                  <div>
-                    <div
-                      style={{
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 600,
-                        fontSize: 15,
-                        color: "#102a45",
-                      }}
-                    >
-                      You're on the list.
-                    </div>
-                    <div
-                      style={{
-                        fontWeight: 300,
-                        fontSize: 14,
-                        color: "#244a73",
-                        marginTop: 2,
-                      }}
-                    >
-                      We'll email you when beta access opens.
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <form
-                    onSubmit={submitHero}
-                    className="fila-form"
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 10,
-                      maxWidth: 700,
-                    }}
-                  >
-                    <input
-                      ref={heroInputRef}
-                      value={heroEmail}
-                      onChange={(e) => {
-                        setHeroEmail(e.target.value);
-                        setHeroErr("");
-                      }}
-                      type="email"
-                      placeholder="you@email.com"
-                      aria-label="Email address"
-                      className="fila-input"
-                      style={{
-                        flex: "1 1 240px",
-                        minWidth: 0,
-                        fontFamily: "'Inter', sans-serif",
-                        fontWeight: 300,
-                        fontSize: 16,
-                        color: "#102a45",
-                        background: "#fff",
-                        border: "1px solid #adcce6",
-                        borderRadius: 10,
-                        padding: "15px 18px",
-                        outline: "none",
-                        transition: "border-color 0.2s, box-shadow 0.2s",
-                      }}
-                    />
-                    <button
-                      type="submit"
-                      disabled={heroSending}
-                      className="fila-btn"
-                      style={{
-                        flex: "0 0 auto",
-                        fontFamily: "'Montserrat', sans-serif",
-                        fontWeight: 600,
-                        fontSize: 15,
-                        color: "#fff",
-                        background:
-                          "linear-gradient(135deg, #244a73 0%, #457aab 100%)",
-                        border: "none",
-                        borderRadius: 10,
-                        padding: "15px 26px",
-                        cursor: heroSending ? "wait" : "pointer",
-                        transition: "transform 0.2s, box-shadow 0.2s",
-                        boxShadow: "0 6px 18px rgba(36,74,115,0.28)",
-                        opacity: heroSending ? 0.7 : 1,
-                      }}
-                    >
-                      {heroSending ? "Joining..." : "Join the Waitlist"}
-                    </button>
-                    <label
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 9,
-                        width: "100%",
-                        marginTop: 10,
-                        fontSize: 13,
-                        fontWeight: 300,
-                        color: "#244a73",
-                        lineHeight: 1.5,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        required
-                        checked={heroConsent}
-                        onChange={(e) => setHeroConsent(e.target.checked)}
-                        style={{
-                          marginTop: 2,
-                          width: 15,
-                          height: 15,
-                          flex: "none",
-                          accentColor: "#457aab",
-                          cursor: "pointer",
-                        }}
-                      />
-                      <span>
-                        I agree to receive emails about early access and
-                        product updates. See our{" "}
-                        <a
-                          href="https://www.getfila.com/privacy-policy/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "#457aab", textDecoration: "underline" }}
-                        >
-                          Privacy Policy
-                        </a>{" "}
-                        for more information.
-                      </span>
-                    </label>
-                  </form>
-                  {heroErr && (
-                    <div
-                      style={{
-                        fontSize: 13.5,
-                        color: "#b04a4a",
-                        marginTop: 9,
-                        paddingLeft: 2,
-                      }}
-                    >
-                      {heroErr}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
             <div
               className="fila-hero-badges"
               style={{
                 display: "flex",
-                flexWrap: "wrap",
-                gap: "12px 20px",
+                flexDirection: "column",
+                gap: 12,
                 marginTop: 22,
                 animation: "filaUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both",
               }}
@@ -1026,8 +369,8 @@ export function Landing() {
                       stroke={1.5}
                     />
                   ),
-                  title: "Companion & Advocate",
-                  desc: "Coaches patients to discuss health insights with their provider and advocate for their health needs.",
+                  title: "Care Navigation",
+                  desc: "Guides patients through the complexity of the healthcare system by coaching them to make informed decisions about their health.",
                 },
               ].map((c) => (
                 <div
@@ -1185,303 +528,50 @@ export function Landing() {
           </div>
         </section>
 
-        {/* SECOND CTA */}
-        <section
-          style={{
-            position: "relative",
-            background: "linear-gradient(135deg, #102a45 0%, #244a73 100%)",
-            padding: "clamp(72px,9vw,116px) clamp(20px,5vw,56px)",
-            overflow: "hidden",
-          }}
-        >
-          <div
+        <WaitlistSection />
+
+        <Footer>
+          <ol
             style={{
-              position: "relative",
-              zIndex: 2,
-              maxWidth: 640,
-              margin: "0 auto",
-              textAlign: "center",
+              margin: 0,
+              padding: "0 0 0 18px",
+              listStyleType: "decimal",
+              fontWeight: 300,
+              fontSize: 12.5,
+              lineHeight: 1.7,
+              color: "#5a8ab0",
             }}
           >
-            <h2
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(2rem,4vw,3.1rem)",
-                lineHeight: 1.08,
-                letterSpacing: "-0.015em",
-                color: "#fff",
-                margin: "0 0 18px",
-              }}
-            >
-              Be among the first to take control.
-            </h2>
-            <p
-              style={{
-                fontWeight: 300,
-                fontSize: "clamp(1rem,1.5vw,1.18rem)",
-                lineHeight: 1.55,
-                color: "#adcce6",
-                margin: "0 0 36px",
-              }}
-            >
-              Beta access opens to waitlist members first. Reserve your place
-              today.
-            </p>
-
-            {ctaDone ? (
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 13,
-                  background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(173,204,230,0.4)",
-                  borderRadius: 12,
-                  padding: "18px 24px",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <div
-                  style={{
-                    flex: "none",
-                    width: 36,
-                    height: 36,
-                    borderRadius: "50%",
-                    background: "#457aab",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <IconCheck size={19} color="#fff" stroke={2.4} />
-                </div>
-                <div style={{ textAlign: "left" }}>
-                  <div
-                    style={{
-                      fontFamily: "'Montserrat', sans-serif",
-                      fontWeight: 600,
-                      fontSize: 15,
-                      color: "#fff",
-                    }}
-                  >
-                    You're on the list.
-                  </div>
-                  <div
-                    style={{
-                      fontWeight: 300,
-                      fontSize: 14,
-                      color: "#adcce6",
-                      marginTop: 2,
-                    }}
-                  >
-                    Watch your inbox for beta access.
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <form
-                  onSubmit={submitCta}
-                  className="fila-form"
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 10,
-                    maxWidth: 520,
-                    margin: "0 auto",
-                  }}
-                >
-                  <input
-                    value={ctaEmail}
-                    onChange={(e) => {
-                      setCtaEmail(e.target.value);
-                      setCtaErr("");
-                    }}
-                    type="email"
-                    placeholder="you@email.com"
-                    aria-label="Email address"
-                    className="fila-input-dark"
-                    style={{
-                      flex: "1 1 240px",
-                      minWidth: 0,
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 300,
-                      fontSize: 16,
-                      color: "#fff",
-                      background: "rgba(255,255,255,0.08)",
-                      border: "1px solid rgba(173,204,230,0.45)",
-                      borderRadius: 10,
-                      padding: "15px 18px",
-                      outline: "none",
-                      transition: "border-color 0.2s, box-shadow 0.2s",
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={ctaSending}
-                    className="fila-btn-light"
-                    style={{
-                      flex: "0 0 auto",
-                      fontFamily: "'Montserrat', sans-serif",
-                      fontWeight: 600,
-                      fontSize: 15,
-                      color: "#102a45",
-                      background: "#adcce6",
-                      border: "none",
-                      borderRadius: 10,
-                      padding: "15px 26px",
-                      cursor: ctaSending ? "wait" : "pointer",
-                      transition: "transform 0.2s, background 0.2s",
-                      opacity: ctaSending ? 0.7 : 1,
-                    }}
-                  >
-                    {ctaSending ? "Joining..." : "Join the Waitlist"}
-                  </button>
-                  <label
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 9,
-                      width: "100%",
-                      marginTop: 10,
-                      textAlign: "left",
-                      fontSize: 13,
-                      fontWeight: 300,
-                      color: "#adcce6",
-                      lineHeight: 1.5,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      required
-                      checked={ctaConsent}
-                      onChange={(e) => setCtaConsent(e.target.checked)}
-                      style={{
-                        marginTop: 2,
-                        width: 15,
-                        height: 15,
-                        flex: "none",
-                        accentColor: "#adcce6",
-                        cursor: "pointer",
-                      }}
-                    />
-                    <span>
-                      I agree to receive emails about early access and
-                      product updates. See our{" "}
-                      <a
-                        href="https://www.getfila.com/privacy-policy/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "#fff", textDecoration: "underline" }}
-                      >
-                        Privacy Policy
-                      </a>{" "}
-                      for more information.
-                    </span>
-                  </label>
-                </form>
-                {ctaErr && (
-                  <div
-                    style={{ fontSize: 13.5, color: "#f0b4b4", marginTop: 11 }}
-                  >
-                    {ctaErr}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
-
-        {/* FOOTNOTES */}
-        <footer
-          style={{
-            background: "#0c2238",
-            padding: "clamp(32px,4vw,48px) clamp(20px,5vw,56px)",
-          }}
-        >
-          <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-            <div
-              style={{
-                borderTop: "1px solid rgba(128,173,209,0.15)",
-                paddingTop: 24,
-              }}
-            >
-              <ol
-                style={{
-                  margin: 0,
-                  padding: "0 0 0 18px",
-                  listStyleType: "decimal",
-                  fontWeight: 300,
-                  fontSize: 12.5,
-                  lineHeight: 1.7,
-                  color: "#5a8ab0",
-                }}
-              >
-                <li>
-                  <em>Time to Talk</em>. PMC, NIH.{" "}
-                  <a
-                    href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1783704/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "#5a8ab0" }}
-                  >
-                    pmc.ncbi.nlm.nih.gov/articles/PMC1783704
-                  </a>
-                </li>
-                <li>
-                  Deaths preventable in the U.S. by improvements in use of
-                  clinical preventive services. <em>PubMed</em>.{" "}
-                  <a
-                    href="https://pubmed.ncbi.nlm.nih.gov/20494236/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "#5a8ab0" }}
-                  >
-                    pubmed.ncbi.nlm.nih.gov/20494236
-                  </a>
-                </li>
-                <li>
-                  Graber, M. L., Franklin, N., &amp; Gordon, R. (2005).
-                  Diagnostic error in internal medicine.{" "}
-                  <em>Archives of Internal Medicine</em>, 165(13), 1493–1499.
-                </li>
-              </ol>
-            </div>
-            <div
-              style={{
-                marginTop: 24,
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                gap: "6px 14px",
-                fontWeight: 300,
-                fontSize: 12,
-                color: "#3d6d8f",
-              }}
-            >
-              <span>
-                &copy; {new Date().getFullYear()} My Fila, Inc. All rights
-                reserved.
-              </span>
+            <li>
+              <em>Time to Talk</em>. PMC, NIH.{" "}
               <a
-                href="/privacy-policy/"
-                className="fila-contact-link"
-                style={{ color: "#5a8ab0", transition: "color 0.2s" }}
+                href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1783704/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#5a8ab0" }}
               >
-                Privacy Policy
+                pmc.ncbi.nlm.nih.gov/articles/PMC1783704
               </a>
+            </li>
+            <li>
+              Deaths preventable in the U.S. by improvements in use of
+              clinical preventive services. <em>PubMed</em>.{" "}
               <a
-                href="/help/"
-                className="fila-contact-link"
-                style={{ color: "#5a8ab0", transition: "color 0.2s" }}
+                href="https://pubmed.ncbi.nlm.nih.gov/20494236/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#5a8ab0" }}
               >
-                Help
+                pubmed.ncbi.nlm.nih.gov/20494236
               </a>
-            </div>
-          </div>
-        </footer>
+            </li>
+            <li>
+              Graber, M. L., Franklin, N., &amp; Gordon, R. (2005).
+              Diagnostic error in internal medicine.{" "}
+              <em>Archives of Internal Medicine</em>, 165(13), 1493–1499.
+            </li>
+          </ol>
+        </Footer>
 
         <ContactModal
           open={contactOpen}

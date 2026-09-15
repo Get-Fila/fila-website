@@ -15,6 +15,8 @@ export default defineConfig({
         help: resolve(__dirname, "help/index.html"),
         helpDeleteAccount: resolve(__dirname, "help/delete-account/index.html"),
         helpDeleteRecords: resolve(__dirname, "help/delete-records/index.html"),
+        about: resolve(__dirname, "about/index.html"),
+        joinWaitlist: resolve(__dirname, "join-waitlist/index.html"),
       },
     },
   },
