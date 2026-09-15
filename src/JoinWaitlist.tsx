@@ -13,8 +13,8 @@ export function JoinWaitlist() {
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fila-landing ::selection { background: #adcce6; color: #102a45; }
         .fila-landing input::placeholder { color: #80add1; }
-        .fila-landing .fila-input-dark:focus { border-color: #adcce6; box-shadow: 0 0 0 3px rgba(173,204,230,0.2); }
-        .fila-landing .fila-btn-light:hover { transform: translateY(-1px); background: #c2d9ee; }
+        .fila-landing .fila-input:focus { border-color: #457aab; box-shadow: 0 0 0 3px rgba(69,122,171,0.15); }
+        .fila-landing .fila-btn:hover { transform: translateY(-1px); box-shadow: 0 9px 24px rgba(36,74,115,0.36); }
       `}</style>
       <div
         className="fila-landing"
@@ -31,8 +31,24 @@ export function JoinWaitlist() {
 
         <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <WaitlistSection
-            heading="Join the waitlist"
-            subtext="Private beta launching soon. Waitlist members get first access — be among the first to try Fila."
+            heading={
+              <>
+                Be among the first to try{" "}
+                <span
+                  style={{
+                    background: "linear-gradient(135deg, #244a73, #adcce6)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "transparent",
+                  }}
+                >
+                  Fila.
+                </span>
+              </>
+            }
+            subtext="Beta access opens to waitlist members first. Reserve your place today."
+            variant="light"
           />
         </div>
 

@@ -57,9 +57,9 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
           gap: 20,
         }}
       >
-        <a href="/" style={{ display: "flex", alignItems: "center", flex: "none" }}>
+        <div style={{ display: "flex", alignItems: "center", flex: "none" }}>
           <img src={filaLogo} alt="Fila" style={{ height: 44 }} />
-        </a>
+        </div>
         <div
           style={{
             display: "flex",
@@ -69,6 +69,7 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
             justifyContent: "flex-end",
           }}
         >
+          <NavLink href="/">Home</NavLink>
           <NavLink href="/about/">About</NavLink>
           <NavLink href="/join-waitlist/">Join the Waitlist</NavLink>
           {onContactClick && (

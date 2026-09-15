@@ -52,13 +52,17 @@ export function Footer({ children }: { children?: React.ReactNode }) {
           >
             <IconBrandTiktok size={20} stroke={1.75} />
           </a>
-          <span
-            aria-label="Fila on X — coming soon"
-            title="Coming soon"
-            style={{ ...badgeStyle, opacity: 0.55, cursor: "default" }}
+          <a
+            href="https://x.com/getmyfila"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Fila on X"
+            style={badgeStyle}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#fff")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#d6e6f5")}
           >
             <IconBrandX size={20} stroke={1.75} />
-          </span>
+          </a>
         </div>
 
         {children && (

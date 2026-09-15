@@ -27,7 +27,7 @@ const card: React.CSSProperties = {
 
 export function HelpIndex() {
   return (
-    <HelpLayout backHref="/" backLabel="← Back to home">
+    <HelpLayout showBack={false}>
       <h1 style={h1}>Help Center</h1>
       <p style={lede}>
         Guides for managing your account and your health data in Fila.

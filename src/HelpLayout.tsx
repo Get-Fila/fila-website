@@ -67,10 +67,12 @@ export function HelpLayout({
   children,
   backHref = "/help/",
   backLabel = "← All help articles",
+  showBack = true,
 }: {
   children: ReactNode;
   backHref?: string;
   backLabel?: string;
+  showBack?: boolean;
 }) {
   const [contactOpen, setContactOpen] = useState(false);
 
@@ -96,20 +98,22 @@ export function HelpLayout({
         }}
       >
         <div style={{ maxWidth: 760, margin: "0 auto" }}>
-          <a
-            href={backHref}
-            style={{
-              display: "inline-block",
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: 13,
-              color: "#457aab",
-              textDecoration: "none",
-              marginBottom: 20,
-            }}
-          >
-            {backLabel}
-          </a>
+          {showBack && (
+            <a
+              href={backHref}
+              style={{
+                display: "inline-block",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 600,
+                fontSize: 13,
+                color: "#457aab",
+                textDecoration: "none",
+                marginBottom: 20,
+              }}
+            >
+              {backLabel}
+            </a>
+          )}
           {children}
         </div>
       </main>

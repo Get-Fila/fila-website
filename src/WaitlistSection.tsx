@@ -5,10 +5,13 @@ import { JOTFORM_WAITLIST, CONSENT_TEXT, submitToJotform, validEmail } from "./s
 export function WaitlistSection({
   heading = "Join the waitlist",
   subtext = "Beta access opens to waitlist members first. Reserve your place today.",
+  variant = "dark",
 }: {
-  heading?: string;
+  heading?: React.ReactNode;
   subtext?: string;
+  variant?: "dark" | "light";
 }) {
+  const dark = variant === "dark";
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [err, setErr] = useState("");
@@ -40,7 +43,9 @@ export function WaitlistSection({
     <section
       style={{
         position: "relative",
-        background: "linear-gradient(135deg, #102a45 0%, #244a73 100%)",
+        background: dark
+          ? "linear-gradient(135deg, #102a45 0%, #244a73 100%)"
+          : "transparent",
         padding: "clamp(72px,9vw,116px) clamp(20px,5vw,56px)",
         overflow: "hidden",
       }}
@@ -61,7 +66,7 @@ export function WaitlistSection({
             fontSize: "clamp(2rem,4vw,3.1rem)",
             lineHeight: 1.08,
             letterSpacing: "-0.015em",
-            color: "#fff",
+            color: dark ? "#fff" : "#102a45",
             margin: "0 0 18px",
           }}
         >
@@ -72,7 +77,7 @@ export function WaitlistSection({
             fontWeight: 300,
             fontSize: "clamp(1rem,1.5vw,1.18rem)",
             lineHeight: 1.55,
-            color: "#adcce6",
+            color: dark ? "#adcce6" : "#244a73",
             margin: "0 0 36px",
           }}
         >
@@ -85,11 +90,14 @@ export function WaitlistSection({
               display: "inline-flex",
               alignItems: "center",
               gap: 13,
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(173,204,230,0.4)",
+              background: dark ? "rgba(255,255,255,0.08)" : "#fff",
+              border: dark
+                ? "1px solid rgba(173,204,230,0.4)"
+                : "1px solid #adcce6",
               borderRadius: 12,
               padding: "18px 24px",
-              backdropFilter: "blur(8px)",
+              backdropFilter: dark ? "blur(8px)" : undefined,
+              boxShadow: dark ? undefined : "0 8px 24px rgba(16,42,69,0.08)",
             }}
           >
             <div
@@ -112,7 +120,7 @@ export function WaitlistSection({
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 600,
                   fontSize: 15,
-                  color: "#fff",
+                  color: dark ? "#fff" : "#102a45",
                 }}
               >
                 You're on the list.
@@ -121,7 +129,7 @@ export function WaitlistSection({
                 style={{
                   fontWeight: 300,
                   fontSize: 14,
-                  color: "#adcce6",
+                  color: dark ? "#adcce6" : "#244a73",
                   marginTop: 2,
                 }}
               >
@@ -151,16 +159,18 @@ export function WaitlistSection({
                 type="email"
                 placeholder="you@email.com"
                 aria-label="Email address"
-                className="fila-input-dark"
+                className={dark ? "fila-input-dark" : "fila-input"}
                 style={{
                   flex: "1 1 240px",
                   minWidth: 0,
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 300,
                   fontSize: 16,
-                  color: "#fff",
-                  background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(173,204,230,0.45)",
+                  color: dark ? "#fff" : "#102a45",
+                  background: dark ? "rgba(255,255,255,0.08)" : "#fff",
+                  border: dark
+                    ? "1px solid rgba(173,204,230,0.45)"
+                    : "1px solid #adcce6",
                   borderRadius: 10,
                   padding: "15px 18px",
                   outline: "none",
@@ -170,19 +180,24 @@ export function WaitlistSection({
               <button
                 type="submit"
                 disabled={sending}
-                className="fila-btn-light"
+                className={dark ? "fila-btn-light" : "fila-btn"}
                 style={{
                   flex: "0 0 auto",
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 600,
                   fontSize: 15,
-                  color: "#102a45",
-                  background: "#adcce6",
+                  color: dark ? "#102a45" : "#fff",
+                  background: dark
+                    ? "#adcce6"
+                    : "linear-gradient(135deg, #244a73 0%, #457aab 100%)",
                   border: "none",
                   borderRadius: 10,
                   padding: "15px 26px",
                   cursor: sending ? "wait" : "pointer",
-                  transition: "transform 0.2s, background 0.2s",
+                  transition: "transform 0.2s, box-shadow 0.2s, background 0.2s",
+                  boxShadow: dark
+                    ? undefined
+                    : "0 6px 18px rgba(36,74,115,0.28)",
                   opacity: sending ? 0.7 : 1,
                 }}
               >
@@ -198,7 +213,7 @@ export function WaitlistSection({
                   textAlign: "left",
                   fontSize: 13,
                   fontWeight: 300,
-                  color: "#adcce6",
+                  color: dark ? "#adcce6" : "#244a73",
                   lineHeight: 1.5,
                   cursor: "pointer",
                 }}
@@ -213,7 +228,7 @@ export function WaitlistSection({
                     width: 15,
                     height: 15,
                     flex: "none",
-                    accentColor: "#adcce6",
+                    accentColor: dark ? "#adcce6" : "#457aab",
                     cursor: "pointer",
                   }}
                 />
@@ -224,7 +239,10 @@ export function WaitlistSection({
                     href="https://www.getfila.com/privacy-policy/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ color: "#fff", textDecoration: "underline" }}
+                    style={{
+                      color: dark ? "#fff" : "#457aab",
+                      textDecoration: "underline",
+                    }}
                   >
                     Privacy Policy
                   </a>{" "}
@@ -233,7 +251,13 @@ export function WaitlistSection({
               </label>
             </form>
             {err && (
-              <div style={{ fontSize: 13.5, color: "#f0b4b4", marginTop: 11 }}>
+              <div
+                style={{
+                  fontSize: 13.5,
+                  color: dark ? "#f0b4b4" : "#b04a4a",
+                  marginTop: 11,
+                }}
+              >
                 {err}
               </div>
             )}

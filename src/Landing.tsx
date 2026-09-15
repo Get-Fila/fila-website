@@ -14,6 +14,7 @@ import {
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { WaitlistSection } from "./WaitlistSection";
+import { FAQ } from "./FAQ";
 import { ContactModal } from "./shared";
 
 function useCountUp(end: number, duration = 1800) {
@@ -529,6 +530,8 @@ export function Landing() {
         </section>
 
         <WaitlistSection />
+
+        <FAQ />
 
         <Footer>
           <ol
