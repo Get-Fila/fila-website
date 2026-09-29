@@ -2,7 +2,9 @@ import { useEffect, useState, FormEvent } from "react";
 import { IconCheck, IconX, IconLoader2 } from "@tabler/icons-react";
 
 export const JOTFORM_CONTACT = "262367145999171";
-export const JOTFORM_WAITLIST = "262367262874163";
+// From the MailerLite embedded form code: .../jsonp/<ACCOUNT_ID>/forms/<FORM_ID>/subscribe
+export const MAILERLITE_ACCOUNT = "2613601";
+export const MAILERLITE_WAITLIST_FORM = "199960165938627811";
 export const CONSENT_TEXT =
   "I agree to receive emails about early access and product updates. See our Privacy Policy for more information.";
 
@@ -20,6 +22,23 @@ export async function submitToJotform(
     body,
   });
   if (!res.ok) throw new Error("Submission failed");
+}
+
+export async function submitToMailerLite(
+  formId: string,
+  fields: Record<string, string>,
+) {
+  const body = new FormData();
+  for (const [key, value] of Object.entries(fields))
+    body.append(`fields[${key}]`, value);
+  body.append("ml-submit", "1");
+  body.append("anticsrf", "true");
+  const res = await fetch(
+    `https://assets.mailerlite.com/jsonp/${MAILERLITE_ACCOUNT}/forms/${formId}/subscribe`,
+    { method: "POST", body },
+  );
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data?.success) throw new Error("Submission failed");
 }
 
 export const validEmail = (e: string) =>

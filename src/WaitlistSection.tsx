@@ -1,6 +1,6 @@
 import { useState, FormEvent } from "react";
 import { IconCheck } from "@tabler/icons-react";
-import { JOTFORM_WAITLIST, CONSENT_TEXT, submitToJotform, validEmail } from "./shared";
+import { MAILERLITE_WAITLIST_FORM, submitToMailerLite, validEmail } from "./shared";
 
 export function WaitlistSection({
   heading = "Join the waitlist",
@@ -27,9 +27,8 @@ export function WaitlistSection({
     setSending(true);
     setErr("");
     try {
-      await submitToJotform(JOTFORM_WAITLIST, {
-        q4_emailAddress: email.trim(),
-        "q15_consent[]": CONSENT_TEXT,
+      await submitToMailerLite(MAILERLITE_WAITLIST_FORM, {
+        email: email.trim(),
       });
       setDone(true);
     } catch {
