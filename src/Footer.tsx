@@ -122,6 +122,13 @@ export function Footer({ children }: { children?: React.ReactNode }) {
             Privacy Policy
           </a>
           <a
+            href="/terms-of-service/"
+            className="fila-contact-link"
+            style={{ color: "#5a8ab0", transition: "color 0.2s" }}
+          >
+            Terms of Service
+          </a>
+          <a
             href="/help/"
             className="fila-contact-link"
             style={{ color: "#5a8ab0", transition: "color 0.2s" }}
